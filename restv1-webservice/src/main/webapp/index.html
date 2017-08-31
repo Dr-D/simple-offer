@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Swagger UI</title>
+    <link rel="icon" type="image/png" href="images/favicon-32x32.png" sizes="32x32"/>
+    <link rel="icon" type="image/png" href="images/favicon-16x16.png" sizes="16x16"/>
+    <link href='css/typography.css' media='screen' rel='stylesheet' type='text/css'/>
+    <link href='css/screen.css' media='screen' rel='stylesheet' type='text/css'/>
+    <link href='css/reset.css' media='print' rel='stylesheet' type='text/css'/>
+    <link href='css/print.css' media='print' rel='stylesheet' type='text/css'/>
+    <link href='css/rest.css' media='print' rel='stylesheet' type='text/css'/>
+
+    <script src='lib/object-assign-pollyfill.js' type='text/javascript'></script>
+    <script src='lib/jquery-1.8.0.min.js' type='text/javascript'></script>
+    <script src='lib/jquery.slideto.min.js' type='text/javascript'></script>
+    <script src='lib/jquery.wiggle.min.js' type='text/javascript'></script>
+    <script src='lib/jquery.ba-bbq.min.js' type='text/javascript'></script>
+    <script src='lib/handlebars-4.0.5.js' type='text/javascript'></script>
+    <script src='lib/lodash.min.js' type='text/javascript'></script>
+    <script src='lib/backbone-min.js' type='text/javascript'></script>
+    <script src='swagger-ui.js' type='text/javascript'></script>
+    <script src='lib/highlight.9.1.0.pack.js' type='text/javascript'></script>
+    <script src='lib/highlight.9.1.0.pack_extended.js' type='text/javascript'></script>
+    <script src='lib/jsoneditor.min.js' type='text/javascript'></script>
+    <script src='lib/marked.js' type='text/javascript'></script>
+    <script src='lib/swagger-oauth.js' type='text/javascript'></script>
+
+    <script type="text/javascript">
+        $(function () {
+            var url = window.location.search.match(/url=([^&]+)/);
+            if (url && url.length > 1) {
+                url = decodeURIComponent(url[1]);
+            } else {
+                url = "http://localhost:8080/restv1/rest/swagger.json";
+            }
+
+            hljs.configure({
+                highlightSizeThreshold: 5000
+            });
+
+            // Pre load translate...
+            if (window.SwaggerTranslator) {
+                window.SwaggerTranslator.translate();
+            }
+            window.swaggerUi = new SwaggerUi({
+                url: url,
+                dom_id: "swagger-ui-container",
+                supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch'],
+                onComplete: function (swaggerApi, swaggerUi) {
+                    if (typeof initOAuth == "function") {
+                        initOAuth({
+                            clientId: "your-client-id",
+                            clientSecret: "your-client-secret-if-required",
+                            realm: "your-realms",
+                            appName: "swagger-demo",
+                            scopeSeparator: " ",
+                            additionalQueryStringParams: {}
+                        });
+                    }
+
+                    if (window.SwaggerTranslator) {
+                        window.SwaggerTranslator.translate();
+                    }
+                },
+                onFailure: function (data) {
+                    log("Unable to Load SwaggerUI");
+                },
+                docExpansion: "none",
+                jsonEditor: false,
+                defaultModelRendering: 'schema',
+                showRequestHeaders: false
+            });
+
+            window.swaggerUi.load();
+
+            function log() {
+                if ('console' in window) {
+                    console.log.apply(console, arguments);
+                }
+            }
+        });
+    </script>
+</head>
+
+<body class="swagger-section">
+
+<div id='header'>
+    <div class="swagger-ui-wrap">
+        <a id="logo" href="http://swagger.io"><img class="logo__img" alt="swagger" height="30" width="30"
+                                                   src="images/logo_small.png"/><span class="logo__title">swagger</span></a>
+        <form id='api_selector'>
+            <div class='input'><input placeholder="http://example.com/api" id="input_baseUrl" name="baseUrl"
+                                      type="text"/></div>
+            <div id='auth_container'></div>
+            <div class='input'><a id="explore" class="header__btn" href="#" data-sw-translate>Explore</a></div>
+        </form>
+    </div>
+</div>
+<div id="message-bar" class="swagger-ui-wrap" data-sw-translate>&nbsp;</div>
+
+<h2>REST API V1.0 Documentation</h2>
+
+<p>This page serves as the main source of REST api documentation, in addition, REST operations can actually be invoked from this page for testing and inspection purposes. See the Resources section below for each resource and its available operations. To run an operation, specify the required input parameters and press the "Try it out!" button, the response will then be displayed.</p>
+
+<p>This section describes common patterns and conventions across the api which have been adopted to improve usability. Successful POST and PUT requests will return a 'location' header in the response containing a link to the new/updated resource. Error responses will, where possible return a structured error message that contains the reasons for the error.</p>
+
+<h3>Status Codes</h3>
+<p>These are the status codes returned by the REST api. Note that status codes beginning with 46x are all custom status codes which should help improve client error handling.</p>
+    200 (OK): The operation completed successfully
+    201 (Created): The POST operation completed successfully, creating a new object<br/>
+
+    400 (Bad Request): The object supplied in a POST/PUT was invalid<br/>
+    460 (Duplicate name): The entity being created or updated is using a name that is already in use by another entity
+    of the same type<br/>
+    461 (Unknown name): The name supplied in a GET/PUT/DELETE did not reference an existing entity<br/>
+    462 (Unknown id): The id supplied in a GET/DELETE did not reference an existing entity<br/>
+
+    500 (Internal Server Error): There was an internal server error preventing the request from completing. Refer to the server logs for more info<br/>
+
+    <h3>REST API Change Log</h3>
+    Version 1.0
+
+    Comments:<br/>
+    Initial release<br/>
+
+
+<div id="swagger-ui-container" class="swagger-ui-wrap"></div>
+
+</body>
+</html>
