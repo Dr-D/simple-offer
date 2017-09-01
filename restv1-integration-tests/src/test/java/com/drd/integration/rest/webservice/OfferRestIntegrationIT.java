@@ -185,11 +185,14 @@ public class OfferRestIntegrationIT implements RestAPIConstants {
         OfferJSON updatedOffer = createOfferJSON(0, "Updated2", "Updated Desc2", 2.0f);
 
         //when
-        given()
+        Response response = given()
                 .contentType("application/json")
                 .body(updatedOffer.json)
                 .when()
                 .put(base_url + "/" + offerJSON.name);
+
+        String location = response.getHeader("location");
+        Assert.assertEquals(location, base_url + "/name/" + updatedOffer.name, "Incorrect location header");
 
         //then - check we can get with new name and that all fields have been updated
         given()
