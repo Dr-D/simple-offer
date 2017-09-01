@@ -96,6 +96,17 @@ public class OfferServiceEJB implements OfferService {
             throw new UnknownNameException(String.format("Update could not find offer with name: '%s'", name));
         }
 
+        if(offerDto.getName() != name) {
+            try {
+                OfferEntity offerEntity = offerDao.get(offerDto.getName());
+                if(offerEntity != null)
+                    throw new DuplicateNameException(
+                            String.format("Could not update as updated entity has duplicate name: '%s'", offerDto.getName()));
+            } catch (EntityNotFoundException enfe) {
+                //do nothing
+            }
+        }
+
         offerDto.setId(offerEntityOrig.getId());
 
         OfferEntity offerEntity;

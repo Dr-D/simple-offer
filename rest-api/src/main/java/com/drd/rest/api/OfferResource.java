@@ -54,6 +54,7 @@ public interface OfferResource {
     @PUT
     @Path("/{name}")
     @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     Response update(@PathParam("name") String name, OfferRest offer);
 
     @ApiResponses(value = {

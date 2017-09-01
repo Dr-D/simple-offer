@@ -203,6 +203,47 @@ public class OfferRestIntegrationIT implements RestAPIConstants {
         ids.add(id);
     }
 
+
+    @Test
+    public void shouldFailUpdateUnknownName() {
+        //given
+        OfferJSON offerJSON = createOfferJSON(0, "update1", "Update Desc1", 1.0f);
+
+        //when//then
+        given()
+                .contentType("application/json")
+                .body(offerJSON.json)
+                .when()
+                .put(base_url + "/UNKNOWN")
+                .then()
+                .statusCode(UNKNOWN_NAME);
+
+    }
+
+    @Test
+    public void shouldFailUpdateDuplicateName() {
+        //given
+        OfferJSON offerJSON = createOfferJSON(0, "update1", "Update Desc1", 1.0f);
+        Long id = createOffer(offerJSON);
+
+        OfferJSON offerJSON2 = createOfferJSON(0, "update2", "Update Desc2", 1.0f);
+        Long id2 = createOffer(offerJSON2);
+
+        String duplicatedName = "{\"id\":0, \"name\":\"" + offerJSON.name + "\",\"price\": 1.0,\"description\":\"\"}";
+
+        //when//then
+        given()
+                .contentType("application/json")
+                .body(duplicatedName)
+                .when()
+                .put(base_url + "/" + offerJSON2.name)
+                .then()
+                .statusCode(DUPLICATE_NAME);
+
+        ids.add(id);
+        ids.add(id2);
+    }
+
     @Test
     public void shouldDeleteByID() {
         //given
